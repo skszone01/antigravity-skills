@@ -1,153 +1,128 @@
 ---
 name: subagent
-description: "ระบบควบคุมและกระจายงาน 3-Tier Enterprise Hierarchy (หัวหน้าใหญ่ > รองหัวหน้า > ลูกน้องหลายคนแบบ 1:N): รองหัวหน้าคุมลูกน้องหลายตัวพร้อมกันโดยจัดสรร Micro-Whitelist ไม่ให้ชนกันเอง -> โหมดประเมินอัตโนมัติ (Zero-Prompt) -> ขั้นที่ 1 ตรวจสอบล่างขึ้นบน (Read-Only) -> ขั้นที่ 2 หัวหน่าวางสัญญากลาง -> ขั้นที่ 3 รองกระจายลูกน้องลงมือขนานกัน -> ขั้นที่ 4 ตั้งทีม QA ชุดใหม่ตรวจซ้ำ -> เคลียร์ kill_all ทันที พิมพ์คำสั่ง /subagent เพื่อเริ่มใช้งาน"
+description: "ระบบควบคุมและกระจายงาน Symmetric Dual-Pyramid (พีระมิดคู่สมมาตร 3 ชั้น: ทีมพัฒนา 3 ชั้น VS ทีมตรวจรับงาน QA 3 ชั้น): โหมดประเมินอัตโนมัติ (Zero-Prompt) -> พีระมิดพัฒนา (หัวหน้า>รอง>ลูกน้อง 1:N) -> Build Gate -> พีระมิดตรวจรับงานอิสระชุดใหม่ (หัวหน้า QA > รอง QA > ลูกน้อง QA แบบ Read-Only 100%) -> เคลียร์ kill_all ทันที พิมพ์คำสั่ง /subagent เพื่อเริ่มใช้งาน"
 ---
 
-# 🏛️ 3-Tier Enterprise Multi-SubAgent Hierarchy Protocol
-## (โครงสร้างพีระมิด 3 ชั้น: หัวหน้าใหญ่ ➔ รองหัวหน้า ➔ ลูกน้องหลายตัว 1:N | งานไม่ชน ไม่มั่ว ตรวจสอบ 100%)
+# 🏛️ Symmetric Dual-Pyramid Multi-SubAgent Protocol
+## (สถาปัตยกรรมพีระมิดคู่แบบสมมาตร: ทีมพัฒนา 3 ชั้น VS ทีมตรวจรับงาน QA 3 ชั้น)
 
-ระบบนี้ถูกออกแบบตามโครงสร้างทีมพัฒนาซอฟต์แวร์ระดับองค์กร (Enterprise Engineering Organization) ผสานสายการบังคับบัญชาแบบทหาร (Military Hierarchy) โดยเปิดให้ **รองหัวหน้า 1 ฝ่าย สามารถแตกและควบคุมลูกน้องช่างเฉพาะทางได้หลายคนพร้อมกัน (1 Vice Lead ➔ N Specialist Workers)** โดยรองหัวหน้ามีหน้าที่เป็นผู้กำกับกรรมสิทธิ์ไฟล์ระดับย่อย (Micro-Whitelist Authority) เพื่อให้ลูกน้องในฝ่ายตนเองทำงานขนานกันได้เต็มที่โดยไม่มีการแย่งหรือแก้ไขไฟล์ทับซ้อนกัน
+ระบบนี้ถูกออกแบบตามโครงสร้างองค์กรวิศวกรรมซอฟต์แวร์ระดับโลก (Symmetric Enterprise Engineering & Quality Architecture) โดยแบ่งองค์กรออกเป็น **2 พีระมิดที่ทำงานสมมาตรกัน (Dual-Pyramid)** เพื่อสร้างความสมดุลระหว่าง **"ความเร็วในการพัฒนา"** กับ **"ความเข้มงวดในการตรวจสอบ 100%"**
 
 ---
 
-## 🔺 โครงสร้างพีระมิด 3 ชั้น (The 3-Tier Command Chain)
+## 🔺 โครงสร้าง 2 พีระมิดสมมาตร (The Dual-Pyramid Structure)
 
-1. **👑 ยอดพีระมิด - หัวหน้าใหญ่ (Chief Orchestrator / Supreme Lead):**
-   - คุมสถาปัตยกรรมระดับมหภาค (Macro-Architecture) วางสัญญากลาง (Interface & Struct Contract)
-   - แบ่งขอบเขตระหว่างฝ่าย (Macro-Domain Partitioning) ป้องกันไม่ให้ฝ่ายใดล้ำเส้นฝ่ายอื่น
-   - เป็นผู้ตัดสินใจรวมโค้ด (Merge), สั่งคอมไพล์ทดสอบ (Empirical Build Gate), และสั่งทำลายโปรเซส (`kill_all`)
-2. **👥 ชั้นกลาง - รองหัวหน้าแต่ละฝ่าย (Domain Tech Leads / Vice Leads):**
-   - **คุมลูกน้องในสังกัดได้หลายคนพร้อมกัน (1:N Sub-Swarm Controller)**
-   - ทำหน้าที่เป็น **Micro-Whitelist Controller**: ซอยงานย่อยและล็อกไฟล์ให้ลูกน้องแต่ละคนอย่างแม่นยำ ไม่ให้ลูกน้องในฝ่ายเดียวกันแย่งแก้ไฟล์เดียวกัน
-   - คัดกรองและกลั่นกรองผลงานจากลูกน้องตนเองก่อนรวมขึ้นรายงานสู่หัวหน้าใหญ่
-3. **🛠️ ฐานปฏิบัติการ - ลูกน้องช่างเฉพาะทาง (Specialist Craftsmen / Feature Workers):**
-   - โค้ดเดอร์ระดับปฏิบัติการที่ทำงานขนานกันหลายตัว โดยแต่ละตัวมีโฟกัสแคบและลึกมาก (Hyper-Focused)
-   - ปฏิบัติตาม Whitelist ไฟล์ที่รองหัวหน้าฝ่ายตนเองล็อกไว้ให้อย่างเคร่งครัด รายงานผลกลับสู่รองหัวหน้าทันทีเมื่องานเสร็จ
+```mermaid
+flowchart TD
+    subgraph PyramidA ["🏗️ พีระมิดที่ 1: ฝ่ายพัฒนา (Engineering Swarm)"]
+        LeadDev["👑 หัวหน้าใหญ่ฝ่ายพัฒนา (Chief Orchestrator)<br>• วางสัญญากลาง (Shared Contract First)<br>• คุม Macro-Domain ไม่ให้ฝ่ายชนกัน"]
+        
+        LeadDev --> ViceDevNet["📡 รองฯ Dev ฝ่าย Network<br>(คุม Micro-Whitelist ภายในทีม)"]
+        LeadDev --> ViceDevUI["🎨 รองฯ Dev ฝ่าย UI/Frontend<br>(คุม Micro-Whitelist ภายในทีม)"]
+        LeadDev --> ViceDevLogic["⚙️ รองฯ Dev ฝ่าย Core Logic<br>(คุม Micro-Whitelist ภายในทีม)"]
+        LeadDev --> ViceDevDB["🗄️ รองฯ Dev ฝ่าย Database<br>(คุม Micro-Whitelist ภายในทีม)"]
+
+        ViceDevNet --> W_Dev1["ลูกน้อง Net (1:N)"]
+        ViceDevUI --> W_Dev2["ลูกน้อง UI (1:N)"]
+        ViceDevLogic --> W_Dev3["ลูกน้อง Logic (1:N)"]
+        ViceDevDB --> W_Dev4["ลูกน้อง DB (1:N)"]
+    end
+
+    W_Dev1 & W_Dev2 & W_Dev3 & W_Dev4 --> BuildGate["🔨 ด่านทดสอบคอมไพล์ (Empirical Build Gate ผ่าน 100%)"]
+
+    BuildGate --> SpawnQAPyramid["🚀 ส่งมอบงานให้ 'พีระมิดตรวจรับงานอิสระ' (Spawn ชุดใหม่ ไร้ความทรงจำเดิม 100%)"]
+
+    subgraph PyramidB ["🛡️ พีระมิดที่ 2: ฝ่ายตรวจรับงานอิสระ (Independent QA Swarm - Read-Only)"]
+        ChiefQA["👑 ประธานฝ่ายตรวจสอบ (Chief QA Director)<br>• รวบรวมผลงานจากรองฯ QA ทุกด้าน<br>• เคาะมติชี้ขาดขั้นสุดท้าย (Final Consensus Verdict)"]
+        
+        ChiefQA --> ViceQAFunc["🔍 รองฯ QA ด้าน Functional<br>(คุมการตรวจความถูกต้องตามโจทย์ 100%)"]
+        ChiefQA --> ViceQASec["🔒 รองฯ QA ด้าน Security & Memory<br>(คุมการตรวจ Buffer / Leak / Race Condition)"]
+        ChiefQA --> ViceQAReg["⚡ รองฯ QA ด้าน Regression<br>(คุมการตรวจผลกระทบข้างเคียงต่อระบบเดิม)"]
+
+        ViceQAFunc --> W_QA1["ลูกน้อง QA ตรวจเคส Input/Output/Edge cases"]
+        ViceQASec --> W_QA2["ลูกน้อง QA เจาะ Memory Leak/Pointer Safety"]
+        ViceQAReg --> W_QA3["ลูกน้อง QA ตรวจสอบ Call Chain ของเดิม"]
+    end
+
+    W_QA1 & W_QA2 & W_QA3 --> ChiefQA
+    ChiefQA --> Verdict{"มติการตรวจรับงาน"}
+    Verdict -- "อนุมัติ 100% (PASSED)" --> Clean["🧹 Lifecycle Cleanup: kill_all จบงานสมบูรณ์"]
+    Verdict -- "ตีกลับ (FAILED)" --> LeadDev
+```
+
+---
+
+### 1. 🏗️ พีระมิดที่ 1: ฝ่ายพัฒนา (Engineering Swarm)
+- **👑 Tier 1 - หัวหน้าใหญ่ฝ่ายพัฒนา (Chief Orchestrator):** คุมเป้าหมายระดับมหภาค วาง Struct/Header สัญญากลาง และล็อกเขตแดนระหว่างฝ่าย (Macro-Domain)
+- **👥 Tier 2 - รองหัวหน้าฝ่ายพัฒนา (Dev Vice Leads):** คุมลูกน้องในสายงานตนเองหลายคนพร้อมกัน (**1:N Controller**) และล็อก Micro-Whitelist ไม่ให้ลูกน้องแย่งแก้ไฟล์เดียวกัน
+- **🛠️ Tier 3 - ลูกน้องโค้ดเดอร์ (Dev Craftsmen):** ปฏิบัติตาม Whitelist ไฟล์ของตนเอง เขียนโค้ดอย่างแม่นยำ และรายงานกลับสู่รองหัวหน้าฝ่ายตนเอง
+
+### 2. 🛡️ พีระมิดที่ 2: ฝ่ายตรวจรับงานอิสระ (Independent QA Swarm - Fresh Context)
+- **👑 Tier 1 - ประธานฝ่ายตรวจสอบ (Chief QA Director):** รวบรวมรายงานจากรองหัวหน้า QA ทุกด้าน และเคาะมติชี้ขาด (Consensus Verdict) ส่งกลับให้ Chief Orchestrator
+- **👥 Tier 2 - รองหัวหน้าฝ่าย QA แต่ละด้าน (QA Vice Leads):**
+  - **รองฯ Functional:** ดูแลการตรวจเงื่อนไขโจทย์ ความถูกต้อง และ Edge cases
+  - **รองฯ Security & Memory:** ดูแลการตรวจ Memory Leaks, Buffer Overflow, Pointer Safety, และ Concurrency
+  - **รองฯ Regression:** ดูแลการตรวจผลกระทบข้างเคียงต่อฟังก์ชันและโมดูลเดิมของระบบ
+- **🔍 Tier 3 - ลูกน้องสายตรวจเจาะลึก (QA Auditors 1:N):** สแกนโค้ดจริงบรรทัดต่อบรรทัด (Read-Only: `research`) ตามหัวข้อที่รองฯ QA ประจำสายมอบหมาย
 
 ---
 
 ## 🎯 กฎเหล็กและเกราะป้องกันความปลอดภัย 6 ประการ (The 6 Core Safety Guardrails)
 
-1. **การคุมกรรมสิทธิ์ไฟล์ 2 ชั้น (Two-Tier File Whitelist - Macro & Micro):**
-   - **ระดับหัวหน้าใหญ่ (Macro):** ล็อกแดนระหว่างฝ่าย (เช่น ฝ่าย UI ห้ามแตะ DB, ฝ่าย Logic ห้ามแตะ Network)
-   - **ระดับรองหัวหน้า (Micro):** ในฝ่ายเดียวกัน รองหัวหน้าต้องล็อกไฟล์ให้ลูกน้องแต่ละคนแยกขาดจากกัน (เช่น ลูกน้อง UI คนที่ 1 แก้เฉพาะ `.rml`, ลูกน้อง UI คนที่ 2 แก้เฉพาะ `.cpp`)
-2. **สายการบังคับบัญชาไม่ข้ามขั้น (Strict Chain of Command):**
-   - ลูกน้องรายงานต่อรองหัวหน้า ➔ รองหัวหน้ารายงานต่อหัวหน้าใหญ่ ➔ หัวหน้าใหญ่เป็นผู้ประสานและตัดสินใจรวมงาน
-3. **จำกัดความลึกของพีระมิดสูงสุด 3 ชั้น (Max Depth Guardrail = 3 Tiers):**
-   - พีระมิดมีได้สูงสุดเพียง 3 ชั้นเท่านั้น (หัวหน้าใหญ่ ➔ รองหัวหน้า ➔ ลูกน้อง) **ห้ามลูกน้องแตกเหลนต่อเด็ดขาด** (แต่ใน 1 รองหัวหน้า สามารถมีลูกน้องกี่คนก็ได้ในแนวนอน)
-4. **สิทธิ์อ่านอย่างเดียวในขั้นตอนตรวจสอบ (Enforce Read-Only in Audit Phases):**
-   - ใน **ขั้นที่ 1 (ตรวจก่อนเริ่ม)** และ **ขั้นที่ 4 (ตรวจรับงาน)** ต้องบังคับใช้ `TypeName: "research"` เสมอ ห้ามใช้ `self` เพื่อรับประกันว่าทีมตรวจสอบจะอ่านโค้ดเพียงอย่างเดียวและไม่มีทางเผลอแก้ไขไฟล์โดยพลการ
-5. **คณะกรรมการตรวจรับงานชุดใหม่เอี่ยม (Zero-Bias Independent Audit Committee):**
-   - เมื่อทำเสร็จสิ้น **ต้อง Spawn รองหัวหน้า QA และลูกน้องชุดใหม่เอี่ยมที่ไม่มีความทรงจำเดิม** มาตรวจงาน ห้ามใช้ทีมเดิมตรวจงานตัวเองเด็ดขาด
-6. **เคลียร์ทั้งระบบทันทีเมื่องานเสร็จ (Zero-Hanging & Immediate Cleanup):**
-   - เมื่อผ่านการตรวจรับ หัวหน้าใหญ่ต้องเรียกคำสั่ง `manage_subagents` Action `kill_all` เคลียร์ทั้งพีระมิดทันที ป้องกัน Zombie Process หรือ Spinner หมุนค้างใน UI
+1. **โครงสร้างสมมาตรและสายบังคับบัญชา 3 ชั้น (Symmetric 3-Tier Command):**
+   - ทั้งทีมสร้างและทีมตรวจมีโครงสร้าง 3 ระดับเท่ากัน (หัวหน้า ➔ รอง ➔ ลูกน้อง 1:N) ป้องกันการสับสนและรักษามาตรฐานระดับสูง
+2. **การคุมกรรมสิทธิ์ไฟล์ 2 ชั้น (Two-Tier File Whitelist - Macro & Micro):**
+   - Macro: หัวหน้าใหญ่ล็อกแดนข้ามฝ่าย (UI ห้ามแตะ DB)
+   - Micro: รองหัวหน้าล็อกไฟล์ย่อยของลูกน้องแต่ละคน (ลูกน้อง UI 1 แก้ `.rml`, ลูกน้อง UI 2 แก้ `.cpp`) ตัดปัญหาโค้ดเซฟทับกัน 100%
+3. **ล็อกสิทธิ์ Read-Only สำหรับพีระมิด QA ทั้งหมด (Enforce Read-Only in QA Pyramid):**
+   - พีระมิด QA ทุกตัว (ทั้งหัวหน้า รอง และลูกน้อง QA) ต้องใช้ประเภท `TypeName: "research"` เท่านั้น เพื่อรับประกันว่าจะไม่มีการเผลอแก้ไขโค้ดระหว่างตรวจรับงาน
+4. **ด่านตรวจคอมไพล์จริงก่อนส่งมอบ (Empirical Build Gate):**
+   - พีระมิดฝ่ายพัฒนาต้องรันคำสั่งคอมไพล์ (Build/Compile) จริงให้ผ่าน 100% ก่อนส่งมอบงานให้พีระมิด QA
+5. **ตัดอคติโดยสิ้นเชิง (Zero-Bias Independent Authority):**
+   - พีระมิด QA ทั้งชุดถูก Spawn ขึ้นมาใหม่เอี่ยม (Fresh Context) ปราศจากความทรงจำของทีมพัฒนา เสมือน Red Team ภายนอก
+6. **เคลียร์ทรัพยากรทั้งสองพีระมิดทันที (Zero-Hanging Cleanup):**
+   - เมื่อ Chief QA อนุมัติ `PASSED` หัวหน้าใหญ่ต้องเรียกคำสั่ง `manage_subagents` Action `kill_all` เคลียร์ทั้งสองพีระมิดทันทีก่อนส่งมอบงาน
 
 ---
 
-## 🔄 แผนผังสถาปัตยกรรมการทำงาน (Orchestration Architecture)
+## 📋 ขั้นตอนการปฏิบัติงาน 4 ขั้น (The 4-Step Operational Flow)
 
-```mermaid
-flowchart TD
-    User(["คำสั่ง /subagent<br>(ระบุงาน หรือ ประเมินอัตโนมัติ)"]) --> Step1
-
-    %% STEP 1: PRE-AUDIT
-    subgraph Step1 ["📌 1. ขั้นตรวจสอบ (Bottom-Up Read-Only Inspection)"]
-        InspectCall["ลูกน้องสำรวจโค้ดจริง (Read-Only: research)<br>(ลูกน้องหลายตัวแยกสายกันสำรวจ)"]
-        InspectCall --> ViceFilter["ส่งรายงานให้ 'รองหัวหน้าแต่ละฝ่าย'<br>(รวบรวม กลั่นกรอง และประเมินผลกระทบ)"]
-        ViceFilter --> ChiefBrief["รองหัวหน้าส่งรายงานสรุปขึ้น 'หัวหน้าใหญ่'<br>(สรุปสุขภาพโค้ดและจุดเสี่ยงภาพรวม)"]
-    end
-
-    ChiefBrief --> Step2
-
-    %% STEP 2: PLANNING
-    subgraph Step2 ["🧠 2. ขั้นวางแผน (Top-Down Architecture & Contract)"]
-        Planning["หัวหน้าใหญ่วิเคราะห์ Root Cause<br>1. นิยาม Struct / Header / Packet ID สัญญากลาง<br>2. ล็อก Macro-Domain แยกฝ่ายเด็ดขาด<br>3. มอบหมายพิมพ์เขียวให้รองหัวหน้าแต่ละฝ่าย"]
-    end
-
-    Planning --> Step3
-
-    %% STEP 3: EXECUTION
-    subgraph Step3 ["⚡ 3. ขั้นลงมือ (Cascading 1:N Execution & Merge)"]
-        Distribute["หัวหน้าใหญ่ส่งมอบพิมพ์เขียวให้ 'รองหัวหน้าแต่ละฝ่าย'"]
-        
-        Distribute --> ViceUI["🎨 รองฯ ฝ่าย UI/Frontend<br>(คุม Micro-Whitelist ภายในทีม)"]
-        ViceUI --> W_UI1["ลูกน้อง UI 1: Layout & RCSS<br>(แก้เฉพาะ .rml, .rcss)"]
-        ViceUI --> W_UI2["ลูกน้อง UI 2: C++ Event Binding<br>(แก้เฉพาะ MyWindow.cpp, .h)"]
-        
-        Distribute --> ViceNet["📡 รองฯ ฝ่าย Network<br>(คุม Micro-Whitelist ภายในทีม)"]
-        ViceNet --> W_Net1["ลูกน้อง Net 1: Packet Struct<br>(แก้เฉพาะ NetMsg.h)"]
-        ViceNet --> W_Net2["ลูกน้อง Net 2: Server Handler<br>(แก้เฉพาะ ServerPacket.cpp)"]
-        ViceNet --> W_Net3["ลูกน้อง Net 3: Client Handler<br>(แก้เฉพาะ ClientPacket.cpp)"]
-
-        Distribute --> ViceLogic["⚙️ รองฯ ฝ่าย Core Logic<br>(คุม Micro-Whitelist ภายในทีม)"]
-        ViceLogic --> W_Logic1["ลูกน้อง Logic 1: Damage Formula"]
-        ViceLogic --> W_Logic2["ลูกน้อง Logic 2: Buff/State Machine"]
-
-        W_UI1 & W_UI2 & W_Net1 & W_Net2 & W_Net3 & W_Logic1 & W_Logic2 --> Integration["👑 หัวหน้าใหญ่ รวมโค้ด (Merge)<br>และสั่งรัน Compile / Build ทดสอบจริง (Build Gate)"]
-    end
-
-    Integration --> Step4
-
-    %% STEP 4: FRESH AUDIT
-    subgraph Step4 ["🛡️ 4. ขั้นตรวจรับงาน (Zero-Bias Independent Audit Committee)"]
-        SpawnFresh["หัวหน้าใหญ่ Spawn คณะกรรมการตรวจรับชุดใหม่เอี่ยม!<br>(Fresh Context ไร้ความทรงจำเดิม | Read-Only)"]
-        SpawnFresh --> QA_Team["🛡️ รองหัวหน้า QA อิสระ + ลูกน้องสาย Audit<br>• ตรวจสอบความถูกต้องตามโจทย์ 100%<br>• ตรวจสอบ Memory Leak, Buffer Overflow, Race Conditions<br>• ตรวจสอบ Regression ผลกระทบข้างเคียงต่อระบบอื่น"]
-        QA_Team --> QADecision{"ผลการตรวจรับ"}
-    end
-
-    QADecision -- "ผ่าน 100% ไร้ข้อบกพร่อง" --> Cleanup["🧹 Lifecycle Cleanup: kill_all<br>(เคลียร์ SubAgent ทุกตัว ปิด UI ส่งงาน)"]
-    QADecision -- "พบข้อผิดพลาด" --> Planning
-```
+### 📌 ขั้นที่ 1: ขั้นสำรวจและประเมินงาน (Pre-Audit & Auto-Discovery)
+*รองรับทั้งกรณีระบุงาน และกรณีพิมพ์ `/subagent` ลอยๆ เพื่อให้ระบบประเมินเองอัตโนมัติ*
+- ลูกน้องสำรวจโค้ด อ่านซอร์สโค้ดจริง สแกน Git Diff, Build Errors, และ Crash Logs
+- รองหัวหน้ารวบรวม สังเคราะห์ และสรุปภาพรวมความเสี่ยงส่งขึ้นหัวหน้าใหญ่ฝ่ายพัฒนา
 
 ---
 
-## 📋 รายละเอียดการปฏิบัติงานทั้ง 4 ขั้น (Step-by-Step Instructions)
-
-### 📌 ขั้นที่ 1: ขั้นตรวจสอบ (Bottom-Up Read-Only Inspection)
-1. **ลูกน้องหลายตัวลงพื้นที่ (Read-Only: `research`):** สำรวจโค้ดตามที่รองหัวหน้าแต่ละสายสั่งการ
-2. **รองหัวหน้าสังเคราะห์:** รองแต่ละฝ่ายรวบรวมรายงานจากลูกน้องของตน ตัดข้อมูลซ้ำซ้อน และจัดทำสรุปสาระสำคัญ
-3. **ส่งมอบให้หัวหน้าใหญ่:** รองหัวหน้านำเสนอสรุปจุดเสี่ยงและโครงสร้างต่อหัวหน้าใหญ่
+### 🧠 ขั้นที่ 2: ขั้นวางแผนและสัญญากลาง (Top-Down Architecture & Contract First)
+- หัวหน้าใหญ่ฝ่ายพัฒนาเขียนนิยาม Struct, Enum, Packet ID หรือ Interface Header กลาง
+- กำหนด Macro-Domain Partitioning มอบหมายขอบเขตโฟลเดอร์/ไฟล์ให้รองหัวหน้าแต่ละฝ่าย
 
 ---
 
-### 🧠 ขั้นที่ 2: ขั้นวางแผน (Top-Down Architecture & Contract Design)
-1. **หัวหน้าใหญ่วางสัญญากลาง (Shared Contract):** เขียน Struct, Packet ID, Header หรือ Enum กลาง
-2. **แบ่งแดน Macro-Whitelist:** กำหนดขอบเขตโฟลเดอร์/ไฟล์ให้รองหัวหน้าแต่ละฝ่ายอย่างเด็ดขาด
+### ⚡ ขั้นที่ 3: พีระมิดพัฒนาลงมือทำขนานกัน (Dev Swarm Execution & Build Gate)
+1. **รองหัวหน้า Dev แจกจ่าย Micro-Whitelist:** กำหนดไฟล์ให้ลูกน้องแต่ละคนไม่ให้ทับซ้อนกัน
+2. **ลูกน้อง Dev ลงมือเขียนโค้ด:** ทำงานคู่ขนานกันหลายตัว (1:N)
+3. **Empirical Build Gate:** หัวหน้าใหญ่รวมโค้ดและ**รันคำสั่งคอมไพล์จริงเสมอ** ยืนยันว่าผ่าน 100%
 
----
-
-### ⚡ ขั้นที่ 3: ขั้นลงมือ (Cascading 1:N Execution & Merge)
-
-1. **รองหัวหน้าแตกงานย่อย (Micro-Whitelist Distribution):**
-   - รองหัวหน้าได้รับงานมาจากหัวหน้าใหญ่ จะนำมาซอยเป็นงานย่อยและล็อกไฟล์ให้ลูกน้องแต่ละคน **(ห้ามลูกน้อง 2 คนในทีมเดียวกันแก้ไฟล์เดียวกัน)**
-2. **ลูกน้องลงมือทำคู่ขนานกัน (Parallel Execution):**
-   - ลูกน้องหลายสิบคนสามารถทำงานพร้อมกันได้โดยไม่มีการเซฟทับกัน เพราะไฟล์ถูกแยกขาดจากกันทั้งในระดับฝ่าย (Macro) และในระดับบุคคล (Micro)
-3. **ด่านตรวจคอมไพล์ (Empirical Build Gate):**
-   - เมื่อลูกน้องทุกสายส่งงานครบ หัวหน้าใหญ่ทำการตรวจสอบความสอดคล้อง แล้ว**รันคำสั่งคอมไพล์ (Build/Compile) จริงเสมอ** เพื่อยืนยันว่าไม่มี Error ใดๆ ก่อนส่งต่อไปขั้นที่ 4
-
-#### 💻 ตัวอย่างการเรียกใช้ช่างเฉพาะทางแบบ 1:N (Step 3):
+#### 💻 ตัวอย่างการเรียกใช้พีระมิดพัฒนา (Step 3):
 ```json
 {
   "Subagents": [
     {
       "TypeName": "self",
-      "Role": "UI Craftsman 1 - RCSS & Layout",
-      "Prompt": "[สังกัด: รองฯ ฝ่าย UI]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanClient/UI/MyFeature.rml, MyFeature.rcss]\nจัดทำ Layout, ฟอนต์ไทย, และความสวยงามตาม Mockup\nเมื่อเสร็จแล้วให้สรุป Diff และจบเทิร์นทันที ห้ามแตะไฟล์ .cpp"
+      "Role": "Dev UI Craftsman 1 - RCSS Layout",
+      "Prompt": "[สังกัด: รองฯ Dev ฝ่าย UI]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanClient/UI/Feature.rml, Feature.rcss]\nจัดทำ Layout สวยงามตามสเปก เมื่อเสร็จให้สรุป Diff และจบเทิร์นทันที"
     },
     {
       "TypeName": "self",
-      "Role": "UI Craftsman 2 - C++ Event Binding",
-      "Prompt": "[สังกัด: รองฯ ฝ่าย UI]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanClient/UI/MyFeatureWindow.cpp, MyFeatureWindow.h]\nเชื่อม Event ปุ่มกดเข้ากับคำสั่งส่ง Packet ตามสัญญากลาง\nเมื่อเสร็จแล้วให้สรุป Diff และจบเทิร์นทันที ห้ามแตะไฟล์ .rml"
+      "Role": "Dev UI Craftsman 2 - C++ Event Binding",
+      "Prompt": "[สังกัด: รองฯ Dev ฝ่าย UI]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanClient/UI/FeatureWindow.cpp, FeatureWindow.h]\nเชื่อมปุ่มกดเข้ากับ Packet ตามสัญญากลาง เมื่อเสร็จให้สรุป Diff และจบเทิร์นทันที"
     },
     {
       "TypeName": "self",
-      "Role": "Network Craftsman 1 - Packet Header",
-      "Prompt": "[สังกัด: รองฯ ฝ่าย Network]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanLogic/Network/NetMsg.h]\nประกาศ Struct Packet และ Enum ID ตามสัญญากลางที่หัวหน้าใหญ่กำหนด\nเมื่อเสร็จแล้วให้สรุป Diff และจบเทิร์นทันที"
-    },
-    {
-      "TypeName": "self",
-      "Role": "Network Craftsman 2 - Server Handler",
-      "Prompt": "[สังกัด: รองฯ ฝ่าย Network]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanLogic/Network/NetMsgHanderServer.cpp]\nเขียนตรรกะตรวจรับ Packet และ Validate ข้อมูลฝั่ง Server\nเมื่อเสร็จแล้วให้สรุป Diff และจบเทิร์นทันที"
+      "Role": "Dev Net Craftsman 1 - Server Handler",
+      "Prompt": "[สังกัด: รองฯ Dev ฝ่าย Network]\nขอบเขตไฟล์ที่อนุญาตให้แก้เท่านั้น: [RanLogic/Network/ServerPacket.cpp]\nเขียนตรรกะตรวจรับ Packet ฝั่งเซิร์ฟเวอร์ เมื่อเสร็จให้สรุป Diff และจบเทิร์นทันที"
     }
   ]
 }
@@ -155,148 +130,97 @@ flowchart TD
 
 ---
 
-### 🛡️ ขั้นที่ 4: ขั้นตรวจรับงาน (Zero-Bias Independent Audit Committee)
+### 🛡️ ขั้นที่ 4: พีระมิด QA ตรวจรับงานอิสระ (QA Swarm & Consensus Verdict)
 
-> ⚠️ **MANDATORY ZERO-BIAS & READ-ONLY RULE:**
-> บังคับ Spawn ทีมตรวจรับชุดใหม่เอี่ยม (`TypeName: "research"`) ปราศจากความทรงจำเดิม เพื่อตรวจ Diff รวมของลูกน้องทุกคน
+เมื่อผ่านด่าน Build Gate หัวหน้าใหญ่จะ **Spawn พีระมิดฝ่ายตรวจสอบ (QA Swarm)** ชุดใหม่เอี่ยม (Read-Only: `research`):
 
-1. **ตรวจสอบความสอดคล้อง:** ตรวจสอบว่าโค้ดของลูกน้องแต่ละสายเมื่อนำมาประกบกันแล้วทำงานได้ราบรื่น 100%
-2. **ตรวจสอบความปลอดภัย:** ตรวจ Memory Leak, Buffer Overflow, Race Conditions, และ Regression
-3. **ตัดสินผล:** หาก `PASSED` หัวหน้าใหญ่จะเข้าสู่ขั้นตอน Cleanup ทันที
+#### 💻 ตัวอย่างการเรียกใช้พีระมิด QA 3 ชั้น (Step 4):
+```json
+{
+  "Subagents": [
+    {
+      "TypeName": "research",
+      "Role": "Chief QA Director",
+      "Prompt": "คุณคือประธานคณะกรรมการตรวจรับงานอิสระ (Fresh Context ไร้ความทรงจำเดิม).\nควบคุมการตรวจสอบ Diff รวมทั้งหมด ประสานงานกับรองฯ QA ทุกด้าน และสรุปมติชี้ขาด [PASSED / FAILED] ส่งกลับให้หัวหน้าใหญ่"
+    },
+    {
+      "TypeName": "research",
+      "Role": "QA Vice Lead - Functional Correctness",
+      "Prompt": "คุณคือรองหัวหน้า QA ด้านฟังก์ชันการทำงาน (Fresh Context).\nตรวจสอบ Diff รวม: ตรงตามโจทย์ 100% หรือไม่, เงื่อนไข If/Else, Validation, และ Edge Cases ทุกกรณี\nส่งรายงานให้ Chief QA Director แล้วจบเทิร์นทันที"
+    },
+    {
+      "TypeName": "research",
+      "Role": "QA Vice Lead - Security & Memory Safety",
+      "Prompt": "คุณคือรองหัวหน้า QA ด้านความปลอดภัยและหน่วยความจำ (Fresh Context).\nตรวจสอบ Diff รวม: เจาะหา Memory Leak, Null Pointer, Array Bound, Buffer Overflow, และ Race Conditions\nส่งรายงานให้ Chief QA Director แล้วจบเทิร์นทันที"
+    },
+    {
+      "TypeName": "research",
+      "Role": "QA Vice Lead - Regression & System Impact",
+      "Prompt": "คุณคือรองหัวหน้า QA ด้านผลกระทบข้างเคียง (Fresh Context).\nตรวจสอบ Diff รวม: ตรวจสอบว่าโค้ดใหม่กระทบต่อระบบเดิมของเกมหรือไม่ (Zero Regression)\nส่งรายงานให้ Chief QA Director แล้วจบเทิร์นทันที"
+    }
+  ]
+}
+```
 
 ---
 
-### 🛑 กลยุทธ์การกู้คืนกรณีฉุกเฉิน (Failure, Error & Timeout Recovery)
+### 🧹 การปิดกระบวนการและเคลียร์ทรัพยากร (Lifecycle Cleanup)
 
-1. **หากลูกน้องคนใดคนหนึ่งตายหรือค้าง (> 3-5 นาที):**
-   - รองหัวหน้าหรือหัวหน้าใหญ่จะสั่ง `manage_subagents` Action `kill` เฉพาะ Conversation ID ของลูกน้องคนนั้นทิ้งทันที
-   - จากนั้น Spawn ช่างตัวใหม่เข้ามารับช่วงต่อเฉพาะไฟล์ที่ลูกน้องคนนั้นทำค้างไว้ โดยลูกน้องคนอื่นๆ ในโปรเจกต์ยังคงทำงานต่อได้ตามปกติ ไม่สะดุด
-2. **หากคอมไพล์ติด Error ที่ด่าน Build Gate:**
-   - หัวหน้าใหญ่จับ Log ส่งตรงให้รองหัวหน้าที่ดูแลไฟล์ที่มี Error นั้น เพื่อให้รองสั่งลูกน้องแก้เฉพาะจุดทันที
-
----
-
-### 🧹 การปิดงานและเคลียร์ทรัพยากร (Zero-Hanging Cleanup)
-
-เมื่อคณะกรรมการตรวจรับงานอนุมัติ `PASSED`:
-หัวหน้าใหญ่ต้องเรียกคำสั่งนี้ทันทีก่อนตอบผู้ใช้:
+เมื่อ Chief QA Director ลงมติ **`PASSED` 100%**:
+หัวหน้าใหญ่ต้องเรียกคำสั่งนี้ทันทีก่อนส่งมอบงาน:
 ```json
 {
   "Action": "kill_all"
 }
 ```
-(เรียกผ่านเครื่องมือ `manage_subagents`) เพื่อปิด SubAgent ทุกตัวในระบบ ปิดตัวหมุน (Spinner) ใน UI และคืนหน่วยความจำ 100%
-
----
-
-## 🗂️ ตัวอย่างเมทริกซ์การแบ่งงานแบบ 1:N ภายในแต่ละฝ่าย
-
-| รองหัวหน้า (Tier 2 Lead) | ลูกน้องในสังกัด (Tier 3 Workers) | Micro-Whitelist (ไฟล์ที่รับผิดชอบ) | หน้าที่เฉพาะจุด |
-|---|---|---|---|
-| **🎨 รองฯ ฝ่าย UI** | • ลูกน้อง 1 (Layout/RCSS)<br>• ลูกน้อง 2 (C++ Event)<br>• ลูกน้อง 3 (Localization) | `*.rml, *.rcss`<br>`MyWindow.cpp, .h`<br>`StringTable.xml` | หน้าตา/อนิเมชัน<br>คลิก/ส่งข้อมูล<br>ภาษาไทยและฟอนต์ |
-| **📡 รองฯ ฝ่าย Network** | • ลูกน้อง 1 (Packet Definer)<br>• ลูกน้อง 2 (Server Handler)<br>• ลูกน้อง 3 (Client Handler) | `NetMsg.h`<br>`ServerHandler.cpp`<br>`ClientHandler.cpp` | นิยาม Struct กลาง<br>ประมวลผลเซิร์ฟเวอร์<br>รับค่ามาอัปเดตหน้าจอ |
-| **⚙️ รองฯ ฝ่าย Logic** | • ลูกน้อง 1 (Formula Craftsman)<br>• ลูกน้อง 2 (State Machine) | `GLCharLogic.cpp`<br>`GLCharState.cpp` | คำนวณดาเมจ/คูลดาวน์<br>จัดการสถานะบัฟ/ดีบัฟ |
-| **🗄️ รองฯ ฝ่าย Database** | • ลูกน้อง 1 (Schema & Table)<br>• ลูกน้อง 2 (Stored Procedure) | `CreateTables.sql`<br>`CharacterSave.sql` | ฟิลด์ข้อมูลใหม่<br>ตรรกะบันทึก/โหลดข้อมูล |
+(เรียกผ่านเครื่องมือ `manage_subagents`) เพื่อทำลาย SubAgent ทั้งหมดในทั้งสองพีระมิด ปิด Spinner ใน UI และคืนหน่วยความจำ 100%
 
 ---
 
 ## 📝 รูปแบบรายงานผลลัพธ์ส่งมอบ (Final Delivery Report)
 
 ```markdown
-# 🏛️ รายงานผลการทำงาน (3-Tier 1:N Enterprise Swarm Report)
+# 🏛️ รายงานผลการทำงาน (Symmetric Dual-Pyramid Report)
 
-### 1. 📌 สรุปผลการตรวจสอบ (Step 1: Inspection Summary)
-- **รายงานจากรองหัวหน้าแต่ละฝ่าย:** [สรุปจุดเสี่ยงและสุขภาพโค้ดเดิม]
-
-### 2. 🧠 สัญญากลางและการจัดสรร Micro-Whitelist (Step 2: Architecture & Contracts)
-- **Shared Struct / Interface:** [ระบุ Struct หรือ Enum กลาง]
-- **Department & Worker Distribution:** [แสดงรายการลูกน้องทุกคนและ Whitelist ไฟล์]
-
-### 3. ⚡ ผลการลงมือของลูกน้องแต่ละสาย (Step 3: 1:N Cascading Execution)
-- **🎨 ฝ่าย UI (N Workers):** [สรุปผลงานของลูกน้องสาย UI ทุกคน]
-- **📡 ฝ่าย Network (N Workers):** [สรุปผลงานของลูกน้องสาย Network ทุกคน]
-- **⚙️ ฝ่าย Core Logic (N Workers):** [สรุปผลงานของลูกน้องสาย Logic ทุกคน]
-- **🗄️ ฝ่าย Database (N Workers):** [สรุปผลงานของลูกน้องสาย DB ทุกคน]
+### 1. 🏗️ สรุปผลงานฝ่ายพัฒนา (Pyramid 1: Engineering Swarm)
+- **Shared Struct / Interface:** [ระบุ Struct หรือ Enum สัญญากลาง]
+- **Dev Squad Execution:**
+  - **📡 ฝ่าย Network (N Workers):** [สรุปผลงานที่เสร็จสิ้น]
+  - **🎨 ฝ่าย UI (N Workers):** [สรุปผลงานที่เสร็จสิ้น]
+  - **⚙️ ฝ่าย Core Logic (N Workers):** [สรุปผลงานที่เสร็จสิ้น]
+  - **🗄️ ฝ่าย Database (N Workers):** [สรุปผลงานที่เสร็จสิ้น]
 - **🔨 Empirical Build Gate:** `PASSED` (คอมไพล์ผ่าน 100% ไร้ Syntax / Linker Errors)
 
-### 4. 🛡️ มติคณะกรรมการตรวจรับงานอิสระ (Step 4: Independent QA Committee)
-- **Committee Verdict:** `PASSED` ✅ (100% Correctness, Zero Regressions)
-- **Concurrency & Security:** ปลอดภัย โค้ดของลูกน้องทุกคนเชื่อมต่อกันสมบูรณ์ ไร้บั๊กชนกัน
+### 2. 🛡️ มติคณะกรรมการฝ่ายตรวจรับงานอิสระ (Pyramid 2: Independent QA Swarm)
+- **👑 Chief QA Director Verdict:** `PASSED` ✅ (มติเอกฉันท์ 100%)
+- **🔍 Functional QA Report:** ฟังก์ชันทำงานครบถ้วนตามโจทย์ทุกประการ
+- **🔒 Security & Memory Report:** ปลอดภัย ไร้ Memory Leak, Buffer Overflow, Race Conditions
+- **⚡ Regression QA Report:** ไม่พบผลกระทบข้างเคียงต่อระบบเดิมของเกม
 
-### 5. 🧹 การปิดกระบวนการ (Lifecycle Cleanup)
-- **Resource Cleanup:** `kill_all` สำเร็จ 100% ไม่มี SubAgent ค้างในหน่วยความจำ
+### 3. 🧹 การปิดกระบวนการ (Lifecycle Cleanup)
+- **Resource Cleanup:** `kill_all` สำเร็จ 100% ปิดทั้งสองพีระมิด ไร้ตัวค้างใน UI
 ```
 
 ---
 
-# 🌐 English Specification & Protocol Reference
+# 🌐 English Specification: Symmetric Dual-Pyramid Protocol
 
-## 🏛️ 1. Architecture Overview (The 3 Tiers)
+## 🏛️ 1. Architecture: The Dual-Pyramid Model
+1. **Pyramid 1 - Engineering Swarm (Development):**
+   - **Chief Orchestrator (Tier 1):** Defines shared struct contracts first, enforces macro-domain boundaries, merges code, and runs empirical build gates.
+   - **Dev Vice Leads (Tier 2):** 1:N controller managing specialist workers with strict micro-whitelists to prevent file collision.
+   - **Dev Craftsmen (Tier 3):** High-precision feature coders operating within dedicated file whitelists.
+2. **Pyramid 2 - Independent QA Swarm (Quality Assurance - Fresh Context):**
+   - **Chief QA Director (Tier 1):** Synthesizes domain audit reports and delivers the definitive consensus verdict.
+   - **QA Vice Leads (Tier 2):**
+     - *Functional QA Lead:* Audits 100% goal adherence, business logic, and edge cases.
+     - *Security & Memory QA Lead:* Audits buffer safety, memory leaks, null dereferences, and thread locks.
+     - *Regression QA Lead:* Audits cross-module compatibility and zero-regression integrity.
+   - **QA Specialist Auditors (Tier 3):** Line-by-line inspection agents operating with strict **Read-Only tools** (`TypeName: "research"`).
 
-1. **👑 Tier 1 - Supreme Orchestrator (Chief Lead / Main Agent):**
-   - Directs macro-architecture and project goals.
-   - Authors the **Shared Contract First** (Shared Structs, Enums, Network Packet IDs, or C++ Interface Headers).
-   - Enforces **Macro-Domain Partitioning** across departments (e.g., UI never touches DB).
-   - Merges code branches, runs the **Empirical Build Gate** (actual compiler commands), and triggers `manage_subagents: kill_all`.
-2. **👥 Tier 2 - Department Vice Leads (Domain Tech Leads):**
-   - Controls multiple worker subagents concurrently (**1:N Sub-Swarm Controller**).
-   - Serves as **Micro-Whitelist Controller**: Sub-divides tasks and assigns strict, non-overlapping file whitelists to individual workers to eliminate edit collisions.
-   - Synthesizes findings and diffs from workers before briefing the Chief.
-3. **🛠️ Tier 3 - Specialist Craftsmen (Hyper-Focused Workers):**
-   - High-precision execution agents operating strictly within their assigned file whitelist.
-   - Reports completed diff summaries back to their Vice Lead and yields execution immediately.
-4. **🛡️ Quality Gate - Independent QA Committee (Zero-Bias Reviewers):**
-   - Spawned in Step 4 with fresh, unpolluted context and **Read-Only tools** (`TypeName: "research"`) to audit combined PR diffs with zero developer confirmation bias.
-
----
-
-## 🎯 2. The 6 Core Safety Guardrails
-
-1. **Two-Tier File Whitelisting (Macro & Micro):**
-   - *Macro Level:* Chief locks department boundaries (UI vs Network vs Logic vs Database).
-   - *Micro Level:* Vice Lead locks individual file assignments among workers (Worker 1 gets `.rml`, Worker 2 gets `.cpp`). Zero file collisions guaranteed.
-2. **Strict Chain of Command:**
-   - Workers report to Vice Leads ➔ Vice Leads report to Chief ➔ Chief orchestrates integration.
-3. **Max Hierarchy Depth = 3 Tiers:**
-   - Depth is strictly capped at 3 tiers (Chief ➔ Vice Leads ➔ Workers). Workers are forbidden from spawning Tier 4 subagents to prevent runaway recursion and token bloat.
-4. **Enforced Read-Only Audit Tools (Steps 1 & 4):**
-   - Step 1 (Pre-Audit) and Step 4 (Post-Audit) must strictly utilize `TypeName: "research"`. Modifying tools are disabled to prevent accidental code mutations during inspections.
-5. **Zero-Bias Independent Audit Committee:**
-   - Always spawn fresh subagents for final QA review. Never reuse agents from earlier execution steps.
-6. **Zero-Hanging Cleanup (`kill_all`):**
-   - Mandatory invocation of `manage_subagents: kill_all` upon task approval to guarantee zero zombie background processes and eliminate UI spinner hanging.
-
----
-
-## 📋 3. Step-by-Step Operational Protocol
-
-### Step 1: Bottom-Up Read-Only Inspection
-*Supports explicit goals or Autonomous Zero-Prompt execution when `/subagent` is invoked without parameters.*
-- Workers perform line-by-line file inspections, scan recent Git diffs, compiler error logs, and crash dumps.
-- Vice Leads aggregate findings, filter noise, and brief the Chief Orchestrator on risks and affected call graphs.
-
-### Step 2: Top-Down Architecture & Contract Design
-- Chief analyzes root cause and drafts the central API contract / shared header definitions.
-- Chief partitions macro-domain boundaries for each department.
-
-### Step 3: Cascading 1:N Execution & Empirical Build Gate
-- Vice Leads distribute micro-whitelists to their respective specialist workers.
-- Workers code concurrently across non-overlapping files.
-- Chief merges code changes and **must execute actual build/compile commands** to empirically verify zero syntax or linker errors before progressing.
-
-### Step 4: Zero-Bias Independent QA Review
-- Chief spawns a fresh QA Committee (`TypeName: "research"`).
-- QA evaluates complete diff for goal alignment, null safety, memory/buffer leaks, and regression.
-- Upon `PASSED` verdict, Chief runs `manage_subagents: kill_all` and delivers final report.
-
----
-
-## 🛑 4. Failure, Error & Timeout Recovery
-1. **Agent Error / Crash:**
-   - Chief issues `manage_subagents: kill` with the specific `ConversationId` of the failed worker.
-   - Chief re-spawns a replacement specialist for that isolated scope without disrupting ongoing sibling workers.
-2. **Timeout (> 3-5 Minutes):**
-   - If any worker hangs without tool calls, immediately terminate via `kill`, narrow prompt scope, and re-dispatch.
-3. **Compiler Build Failure:**
-   - Chief isolates compiler error logs and routes them to the responsible Vice Lead for immediate hot-patching before QA is engaged.
-
+## 🎯 2. Safety Rules & Operational Lifecycle
+- **Symmetric 3-Tier Command:** Identical 3-tier hierarchy across both Dev and QA pyramids.
+- **Two-Tier File Whitelisting:** Macro-domain isolation between departments + micro-whitelist isolation among dev workers.
+- **Strict Read-Only for QA:** The entire QA pyramid operates with `TypeName: "research"` to eliminate accidental mutations.
+- **Empirical Build Gate:** Mandatory successful compilation before QA handoff.
+- **Immediate Cleanup:** Mandatory `manage_subagents: kill_all` upon task approval to guarantee zero lingering processes.
