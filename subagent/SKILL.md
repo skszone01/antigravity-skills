@@ -226,3 +226,77 @@ flowchart TD
 ### 5. 🧹 การปิดกระบวนการ (Lifecycle Cleanup)
 - **Resource Cleanup:** `kill_all` สำเร็จ 100% ไม่มี SubAgent ค้างในหน่วยความจำ
 ```
+
+---
+
+# 🌐 English Specification & Protocol Reference
+
+## 🏛️ 1. Architecture Overview (The 3 Tiers)
+
+1. **👑 Tier 1 - Supreme Orchestrator (Chief Lead / Main Agent):**
+   - Directs macro-architecture and project goals.
+   - Authors the **Shared Contract First** (Shared Structs, Enums, Network Packet IDs, or C++ Interface Headers).
+   - Enforces **Macro-Domain Partitioning** across departments (e.g., UI never touches DB).
+   - Merges code branches, runs the **Empirical Build Gate** (actual compiler commands), and triggers `manage_subagents: kill_all`.
+2. **👥 Tier 2 - Department Vice Leads (Domain Tech Leads):**
+   - Controls multiple worker subagents concurrently (**1:N Sub-Swarm Controller**).
+   - Serves as **Micro-Whitelist Controller**: Sub-divides tasks and assigns strict, non-overlapping file whitelists to individual workers to eliminate edit collisions.
+   - Synthesizes findings and diffs from workers before briefing the Chief.
+3. **🛠️ Tier 3 - Specialist Craftsmen (Hyper-Focused Workers):**
+   - High-precision execution agents operating strictly within their assigned file whitelist.
+   - Reports completed diff summaries back to their Vice Lead and yields execution immediately.
+4. **🛡️ Quality Gate - Independent QA Committee (Zero-Bias Reviewers):**
+   - Spawned in Step 4 with fresh, unpolluted context and **Read-Only tools** (`TypeName: "research"`) to audit combined PR diffs with zero developer confirmation bias.
+
+---
+
+## 🎯 2. The 6 Core Safety Guardrails
+
+1. **Two-Tier File Whitelisting (Macro & Micro):**
+   - *Macro Level:* Chief locks department boundaries (UI vs Network vs Logic vs Database).
+   - *Micro Level:* Vice Lead locks individual file assignments among workers (Worker 1 gets `.rml`, Worker 2 gets `.cpp`). Zero file collisions guaranteed.
+2. **Strict Chain of Command:**
+   - Workers report to Vice Leads ➔ Vice Leads report to Chief ➔ Chief orchestrates integration.
+3. **Max Hierarchy Depth = 3 Tiers:**
+   - Depth is strictly capped at 3 tiers (Chief ➔ Vice Leads ➔ Workers). Workers are forbidden from spawning Tier 4 subagents to prevent runaway recursion and token bloat.
+4. **Enforced Read-Only Audit Tools (Steps 1 & 4):**
+   - Step 1 (Pre-Audit) and Step 4 (Post-Audit) must strictly utilize `TypeName: "research"`. Modifying tools are disabled to prevent accidental code mutations during inspections.
+5. **Zero-Bias Independent Audit Committee:**
+   - Always spawn fresh subagents for final QA review. Never reuse agents from earlier execution steps.
+6. **Zero-Hanging Cleanup (`kill_all`):**
+   - Mandatory invocation of `manage_subagents: kill_all` upon task approval to guarantee zero zombie background processes and eliminate UI spinner hanging.
+
+---
+
+## 📋 3. Step-by-Step Operational Protocol
+
+### Step 1: Bottom-Up Read-Only Inspection
+*Supports explicit goals or Autonomous Zero-Prompt execution when `/subagent` is invoked without parameters.*
+- Workers perform line-by-line file inspections, scan recent Git diffs, compiler error logs, and crash dumps.
+- Vice Leads aggregate findings, filter noise, and brief the Chief Orchestrator on risks and affected call graphs.
+
+### Step 2: Top-Down Architecture & Contract Design
+- Chief analyzes root cause and drafts the central API contract / shared header definitions.
+- Chief partitions macro-domain boundaries for each department.
+
+### Step 3: Cascading 1:N Execution & Empirical Build Gate
+- Vice Leads distribute micro-whitelists to their respective specialist workers.
+- Workers code concurrently across non-overlapping files.
+- Chief merges code changes and **must execute actual build/compile commands** to empirically verify zero syntax or linker errors before progressing.
+
+### Step 4: Zero-Bias Independent QA Review
+- Chief spawns a fresh QA Committee (`TypeName: "research"`).
+- QA evaluates complete diff for goal alignment, null safety, memory/buffer leaks, and regression.
+- Upon `PASSED` verdict, Chief runs `manage_subagents: kill_all` and delivers final report.
+
+---
+
+## 🛑 4. Failure, Error & Timeout Recovery
+1. **Agent Error / Crash:**
+   - Chief issues `manage_subagents: kill` with the specific `ConversationId` of the failed worker.
+   - Chief re-spawns a replacement specialist for that isolated scope without disrupting ongoing sibling workers.
+2. **Timeout (> 3-5 Minutes):**
+   - If any worker hangs without tool calls, immediately terminate via `kill`, narrow prompt scope, and re-dispatch.
+3. **Compiler Build Failure:**
+   - Chief isolates compiler error logs and routes them to the responsible Vice Lead for immediate hot-patching before QA is engaged.
+
